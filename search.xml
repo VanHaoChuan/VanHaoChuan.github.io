@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title><![CDATA[BioHW]]></title>
+    <url>%2F2020%2F02%2F16%2FBioHW%2F</url>
+    <content type="text"></content>
+  </entry>
+  <entry>
+    <title><![CDATA[VerbFormInJa]]></title>
+    <url>%2F2019%2F10%2F01%2FVerbFormInJa%2F</url>
+    <content type="text"><![CDATA[TypeType1End by い Type2End by え ＋ 起きます と 見ます etc． Type3End by します Change to てType1 To てきー ます ＋ いてぎー ます ＋ いでびとみとにー ます ＋ んでちとりといー ます ＋ ってしー ます ＋ して Type 2 &amp; 3 To てー ます ＋ て]]></content>
+      <tags>
+        <tag>Language</tag>
+        <tag>Japanese</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[2019-8-9-Update]]></title>
+    <url>%2F2019%2F08%2F09%2F2019-8-9-Update%2F</url>
+    <content type="text"><![CDATA[Realtime talk by Tidio利用Tidio建置了實時通訊 .post-block設置透明度]]></content>
+      <tags>
+        <tag>News</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[MusicLove]]></title>
+    <url>%2F2019%2F08%2F09%2FMusicLove%2F</url>
+    <content type="text"><![CDATA[2019-8-9 spotify:track:5z9fU5QP5z8jJXcP6OmU0w https://open.spotify.com/track/5z9fU5QP5z8jJXcP6OmU0w?si=r0kw-7R7R5yiSdYKMbjMgg http://smarturl.it/GlassMansionStreamDL http://music.163.com/song?id=572165488&amp;userid=401473384 2019-10-01 http://music.163.com/song?id=529659114&amp;userid=401473384 http://music.163.com/song?id=26124988&amp;userid=401473384]]></content>
+      <tags>
+        <tag>Music</tag>
+        <tag>Life</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[利用Android Studio(CMake)构筑Native Mod(Nmod)]]></title>
+    <url>%2F2019%2F08%2F07%2F%E7%94%A8AS%E5%81%9ANMod%2F</url>
+    <content type="text"><![CDATA[NModNmod是一种用来Modify Minecraft的工具,从而实现游戏里没有的功能 具体实现是使用Cydia Substrate来Hook掉libminecraftpe.so里的函数 前置知识你只需要知道一些C++&amp;JNI的知识 准备工作 你需要安装正确匹配版本的ModdPE与Minecraft PE 一个载有Android Studio的电脑(我这里使用的是Mac,不过差不多) 从http://www.cydiasubstrate.com/id/73e45fe5-4525-4de7-ac14-6016652cc1b8/下载SubstrateSDK Step1:Create Project创建一个新的Android NDK项目,我这里取名叫NMod_Tutorial ※不需要在AndroidManifest.xml里改任何东西,那是BlockLauncher Addon的需要 Step2:Set up CMake移到CMakeLists.txt 去掉注释会发现里面东西其实很少 CmakeVersion1cmake_minimum_required(VERSION 3.4.1) 这句是指定CMake最小版本的需求 CmakeNewLib lang: cmake1234add_library( native-lib SHARED native-lib.cpp) 这句是将native-lib.cpp编译成一个名叫native-lib的SHARED库(动态链接库)(你当然可以自己命名成别的库),然后可以在Java里LoadLibrary(这里是顺口一提,做NMod时并不需要什么Java代码的使用) 然后等你打包好apk后,ModdPE会根据nmod_manifest文件用你指定的.so(后文会讲) 例如，如果您在构建脚本中指定“native-lib”作为共享库的名称，CMake 将创建一个名称为 libnative-lib.so 的文件。不过，在 Java 代码中加载此库时，请使用您在 CMake 构建脚本中指定的名称： static { System.loadLibrary(“native-lib”);} @AndroidDevelopershttps://developer.android.com/studio/projects/add-native-code?hl=zh-cn find_library( log-lib log) CmakeFindLib lang: cmake 这句是将liblog-lib.so添加到log中,以便你使用这个Log库 CmakeLinkLib lang: cmake123target_link_libraries( native-lib $&#123;log-lib&#125;) 这句话是将log库与你的库链接起来 我们的目标是利用Substrate来Hook掉libminecraftpe.so 那么我们得加载libsubstrate.so(位于你下载的SDK中)以及libminecraftpe.so(将你的Minecraft.apk的后缀改成.zip然后解压即可获得) 在/app目录下新增一个libs文件夹 里面建一个armeabi-v7a的文件夹(我们只需要做这个架构的NMnod,因为MinecraftPE本身就是32x的)然后把上面说到的两个so拖进去 进入CmakeLists.txt,在findLibrary后加入 AddLibraries lang: cmake1234add_library(substrate SHARED IMPORTED)set_target_properties(substrate PROPERTIES IMPORTED_LOCATION $&#123;CMAKE_SOURCE_DIR&#125;/../../../libs/$&#123;ANDROID_ABI&#125;/libsubstrate.so)add_library(minecraftpe SHARED IMPORTED)set_target_properties(minecraftpe PROPERTIES IMPORTED_LOCATION $&#123;CMAKE_SOURCE_DIR&#125;/../../../libs/$&#123;ANDROID_ABI&#125;/libminecraftpe.so) 这涉及到Cmake的使用方法,具体可以去 @没有博士学位的菜狗blog.csdn.net/bigdog_1027/article/details/79113342 CmakeLinkLib12345target_link_libraries（ native-lib minecraftpe substrate $&#123;log-lib&#125;) 光有库没用,我们知道还需要头文件的添加 其实我们只需要有Substrate.h就够了,但是为了让编译通过,我们不得不加入mcpe的头文件在/src文件夹下创建include文件夹,并在CmakeLists.txt findLibrary前加入 CmakeAddInclue lang: camke12include_directories($&#123;CMAKE_SOURCE_DIR&#125;/include)include_directories($&#123;CMAKE_SOURCE_DIR&#125;) Last Step配置一下build.gradle设置ABI filter(只要32x)在设置一下Cmake文件位置 然后在写完了NMod后,在/src/main里建一个assets文件夹(如果没有的话)在里面新建一个nmod_manifest.json来写你的NMod配置文件基本要素有:{ “name” : NMod名称, “package_name” : 包名, “author” : 作者, “native_libs_info”: [ { “name”: 你的.so起的名字, “use_api”: 是否使用api,我们不使用,所以填”false” } ], “version_code”: 版本号, “version_name”: 版本名, “minecraft_version_name” : 支援的MinecraftPE版本, “description”: 描述 }然后就可以编辑你的cpp档案开始你的MinecraftPE-modify了 ps. 如果你找不到以上所需的任何一个资源或有疑惑,可以在评论留言,不过也可以加839574598(QQ群),里面有很多大佬,而且他们都很热心帮你解答问题(里面还有NMod模版,可快速开始工程)]]></content>
+      <tags>
+        <tag>NMOD</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[2019-8-7-Update]]></title>
+    <url>%2F2019%2F08%2F07%2F2019-8-7-Update%2F</url>
+    <content type="text"><![CDATA[AM看板娘新增看板娘,Mobile Disable 11:23新增第二只看板娘,原看板娘保留,并设为300x150,Mobile Enable,新看板娘Mobile Disable]]></content>
+      <tags>
+        <tag>News</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[进制相关]]></title>
+    <url>%2F2019%2F08%2F06%2F%E8%BF%9B%E5%88%B6%E7%9B%B8%E5%85%B3%2F</url>
+    <content type="text"><![CDATA[二进制定义逢二进一 特性x(10) = 000y0000…000(2)&lt;n个零&gt; = 2 ^ n - 1 转换方法将十进制数拆分成2的n次方的数 e.g. 65 = 64 + 1 = 1000001]]></content>
+      <tags>
+        <tag>algorithm</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[位运算]]></title>
+    <url>%2F2019%2F08%2F06%2F%E4%BD%8D%E8%BF%90%E7%AE%97%2F</url>
+    <content type="text"><![CDATA[&amp;操作符VariableA &amp; VariableB 当VariableA的某位值与VariableB的值相同时保留,否则舍弃 e.g. 0000011 &amp; 0000010 = 0000010 = 2(10) |操作符VariableA | VariableB 当VariableA的某位值等于一或VariableB的值等于一是保留一 e.g. 0001010 | 0000101 = 0001111 = 15(10) &lt;&lt;操作符VariableA &lt;&lt; VariableB 每一位向左移VariableB位&lt;10进制先隐式转换成2进制&gt; e.g. 00100000 &lt;&lt; 1= 01000000 对一个数使用&lt;&lt;1时等价于*=2 &gt;&gt;操作符VariableA &gt;&gt; VariableB 每一位向右移VariableB位 e.g. 00100000 &gt;&gt;1= 00010000 对一个数使用&gt;&gt;1时等价于/=2 ^操作符VariableA ^ VariableB 两个相同的数会变成0，反之是1 e.g. 00011000 ^ 00010000 = 00001000]]></content>
+      <tags>
+        <tag>C++</tag>
+        <tag>NOIP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[C++ 豆知识]]></title>
+    <url>%2F2019%2F08%2F06%2FC-%E8%B1%86%E7%9F%A5%E8%AF%86%2F</url>
+    <content type="text"><![CDATA[Stated更新 Language非零值强制转换为True]]></content>
+      <tags>
+        <tag>C++</tag>
+        <tag>NOIP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[波兰表示法(前缀法)]]></title>
+    <url>%2F2019%2F08%2F06%2F%E6%B3%A2%E5%85%B0%E8%A1%A8%E7%A4%BA%E6%B3%95-%E5%89%8D%E7%BC%80%E6%B3%95%2F</url>
+    <content type="text"><![CDATA[定义将运算式的操作符写在运算对象前 e.g. 3 + 1「中缀」+ 3 1「前缀」 运算时仍会依照平常的运算次序,因而没有歧义产生 同时也不需要括号 e.g. - *a b *c d等价于a * b - c * d]]></content>
+      <tags>
+        <tag>NOIP</tag>
+        <tag>algorithm</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[2019.8.6_UpDate]]></title>
+    <url>%2F2019%2F08%2F06%2F2019-8-6-UpDate%2F</url>
+    <content type="text"><![CDATA[AMComment system 新增Valines匿名评论 Disqus继续保留 Guest Recorder利用busuanzi新增访客统计 Google &amp; Bing Search Engine可用Google &amp; Bing 抓取到sitemap.xml的网页信息 PMComment system Valines匿名评论取消,因为我不想实名LeanCloud 利用GitMent进行评论失败,转而利用Gitalk 取消Disqus]]></content>
+      <tags>
+        <tag>News</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[NOIP-JOURNEY]]></title>
+    <url>%2F2019%2F08%2F05%2FNOIP-JOURNEY%2F</url>
+    <content type="text"><![CDATA[The way it’s meant to be fucked//TODO: Fulfill it.]]></content>
+      <tags>
+        <tag>Program</tag>
+      </tags>
+  </entry>
+</search>
